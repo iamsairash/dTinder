@@ -1,0 +1,21 @@
+{
+  "name": "dtinder",
+  "version": "1.0.0",
+  "description": "Tinder for developers",
+  "keywords": [
+    "javascript",
+    "nodejs",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "Sairash",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
