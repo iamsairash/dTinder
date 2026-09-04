@@ -2,21 +2,23 @@ const express = require("express");
 
 const app = express();
 
-app.use("/test", (req, res) => {
-  res.send("Hello from the server");
-});
+app.get("/user",(req,res)=>{
+    res.send({firstName: "Sairash", lastName: "Chaudhary"})
+})
 
-app.use("/hello", (req, res) => {
-  res.send("Hello Hello Hello");
-});
+app.post("/user",(req,res)=>{
+    //posted user data
+    res.send("user data saved in database successfully.")
+})
 
-app.use("/nodemon", (req, res) => {
-  res.send("testing nodemon");
-});
+app.patch("/user",(req,res)=>{
+    //data updated
+    res.send("user date updated.")
+})
 
-app.use("/", (req, res) => {
-  res.send("Welcome to .......");
-});
+app.delete("/user",(req,res)=>{
+    res.send("user data deleted.")
+})
 
 app.listen(3000, () => {
   console.log("The server is running in port 3000...");
