@@ -1,9 +1,8 @@
 const express = require("express");
 const { User } = require("./models/user");
-const validator = require("validator");
-
 const { connectDB } = require("./config/database");
-const { default: mongoose } = require("mongoose");
+const { validateSignUpData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -11,9 +10,21 @@ app.use(express.json()); // middleware, it will convert all the json data that w
 // send from client or postman to js object
 
 app.post("/signup", async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const saltRounds = 10;
   try {
-    const user = new User({ firstName, lastName, email, password });
+    //validate data
+    validateSignUpData(req);
+    const { firstName, lastName, email, password } = req.body;
+
+    //encrypt password
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: passwordHash,
+    });
     await user.save();
     res.send("User data saved.");
   } catch (err) {
@@ -86,7 +97,7 @@ app.patch("/user/:userId", async (req, res) => {
     if (fieldsToUpdate.length === 0) {
       throw new Error("Request body cannot be empty.");
     }
-    const isAllowedUpdates =fieldsToUpdate.every((k) => {
+    const isAllowedUpdates = fieldsToUpdate.every((k) => {
       return ALLOWED_UPDATES.includes(k);
     });
     if (!isAllowedUpdates) {
