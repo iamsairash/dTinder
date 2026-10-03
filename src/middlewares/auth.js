@@ -1,33 +1,25 @@
-const adminAuth = (req,res,next)=>{
-    const token = "abc"
-    const isAuthorized = token ==="abc"
-    if (isAuthorized){
-        next()
-    }
-    else{
-        res.status(401).send("Unauthorized access")
-    }
-}
+const jwt = require("jsonwebtoken");
+const { User } = require("../models/user");
 
-const userAuth = (req,res,next)=>{
-    const token = "abc"
-    const isAuthorized = token ==="abc"
-    if (isAuthorized){
-        next()
+const userAuth = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      throw new Error("Invalid Token. Login please.");
     }
-    else{
-        res.status(401).send("Unauthorized access")
+    const decondedData = await jwt.verify(token, "SecretCode@123");
+    const { _id } = decondedData;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found.");
     }
-}
-
-const errorHandling = (err,req,res,next)=>{
-    if (err){
-        res.send("Something went wrong")
-    }
-}
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+};
 
 module.exports = {
-    adminAuth,
-    userAuth,
-    errorHandling
-}
+  userAuth,
+};
